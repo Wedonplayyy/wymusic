@@ -1,63 +1,76 @@
 <template>
-    <div class="body">
-        <div class="search">
-            <div>音乐馆</div>
+    <div>
+        <div class="body">
+            <div class="search">
+                <div>音乐馆</div>
+                <div>
+                    <input type="text"
+                           placeholder="搜索"
+                           onfocus="showSearch"/>
+                </div>
+                <div style="display: flex">
+                    <div>搜索</div>
+                    <img style="width:24px;height:24px;vertical-align:middle;"
+                         src="native/icons/top音乐.png">
+                </div>
+            </div>
+            <div class="swipe">
+                <swiper autoplay indicator-dots>
+                    <swiper-item  v-for="item in banners" :key="item.encodeId">
+                        <img :src="item.pic" class="slide-image"/>
+                    </swiper-item>
+                </swiper>
+            </div>
+            <div class="cat">
+                <div class="cat-item">
+                    <div class="cat-title">每日推荐</div>
+                    <img class="cat-icon" src="native/icons/推荐报表.png">
+                </div>
+                <div class="cat-item">
+                    <div class="cat-title">歌单</div>
+                    <img class="cat-icon" src="native/icons/音乐2.png">
+                </div>
+                <div class="cat-item">
+                    <div class="cat-title">排行榜</div>
+                    <img class="cat-icon" src="native/icons/排行榜.png">
+                </div>
+                <div class="cat-item">
+                    <div class="cat-title">电台</div>
+                    <img class="cat-icon" src="native/icons/蚂蚁-电台.png">
+                </div>
+                <div class="cat-item">
+                    <div class="cat-title">直播</div>
+                    <img class="cat-icon" src="native/icons/直播.png">
+                </div>
+            </div>
+            <list class="list-item" :array="this.arrSlice(personalized)" title="推荐歌单" button="歌单广场"></list>
+            <list class="list-item" :array="this.arrSlice(album)" title="新碟" button="更多新碟"></list>
+            <list class="list-item" :array="this.arrSlice(newsong)" title="音乐新势力" button="新音乐"></list>
+            <list class="list-item" :array="this.arrSlice(djprogram)" title="推荐电台" button="电台广场"></list>
+            <list class="list-item" :array="this.arrSlice(program)" title="推荐节目" button="更多节目"></list>
+        </div>
+        <div>
             <div>
-                <input type="text" placeholder="请输入搜索内容" bindcomfirm="search"/>
+                <input type="text"
+                       placeholder="请输入搜索关键词"
+                       autofocus
+                       @keydown.enter="search"
+                       v-model="value"/>
+                <div @click="showHome">取消</div>
             </div>
-            <div style="display: flex">
+            <div>搜索历史</div>
+            <div v-if="showHot">
+                <div>热搜榜</div>
+                <div v-model="(item,index) in this.hotSearch" :key="index">{{item}}</div>
+            </div>
+            <div v-else>
                 <div>搜索</div>
-                <img style="width:24px;height:24px;vertical-align:middle;"
-                     src="native/icons/top音乐.png">
+                <div></div>
             </div>
         </div>
-        <div class="swipe">
-            <swiper autoplay indicator-dots>
-                <swiper-item  v-for="item in banners" :key="item.encodeId">
-                    <img :src="item.pic" class="slide-image"/>
-                </swiper-item>
-            </swiper>
-        </div>
-        <div class="cat">
-            <div class="cat-item">
-                <div class="cat-title">每日推荐</div>
-                <img class="cat-icon" src="native/icons/推荐报表.png">
-            </div>
-            <div class="cat-item">
-                <div class="cat-title">歌单</div>
-                <img class="cat-icon" src="native/icons/音乐2.png">
-            </div>
-            <div class="cat-item">
-                <div class="cat-title">排行榜</div>
-                <img class="cat-icon" src="native/icons/排行榜.png">
-            </div>
-            <div class="cat-item">
-                <div class="cat-title">电台</div>
-                <img class="cat-icon" src="native/icons/蚂蚁-电台.png">
-            </div>
-            <div class="cat-item">
-                <div class="cat-title">直播</div>
-                <img class="cat-icon" src="native/icons/直播.png">
-            </div>
-        </div>
-<!--        <div class="list-item">-->
-<!--            <div class="title">-->
-<!--                <div>推荐歌单</div>-->
-<!--                <div>歌单广场</div>-->
-<!--            </div>-->
-<!--            <div class="grid">-->
-<!--                <div class="grid-item" v-for="(item, index) in personalized" :key="index">-->
-<!--                    <img :src="item.picUrl" class="list-img">-->
-<!--                    <div class="list-title">{{item.name}}</div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-        <list class="list-item" :array="personalized" title="推荐歌单" button="歌单广场"></list>
-        <list class="list-item" :array="this.arrSlice(album)" title="新碟" button="更多新碟"></list>
-        <list class="list-item" :array="this.arrSlice(newsong)" title="音乐新势力" button="新音乐"></list>
-        <list class="list-item" :array="this.arrSlice(djprogram)" title="推荐电台" button="电台广场"></list>
-        <list class="list-item" :array="this.arrSlice(program)" title="推荐节目" button="更多节目"></list>
     </div>
+
+
     
 </template>
 
@@ -72,14 +85,29 @@
         data() {
             return {
                 banners:[],//轮播图
-                personalized:[],//推荐歌单\
+                personalized:[],//推荐歌单
                 album:[],//新碟
                 newsong:[],//新歌
                 djprogram:[],//推荐电台
                 program:[],//推荐节目
+                hotSearch:[],//热门搜索
+                show:false,//搜索部分显示
+                showHot:true,//热门搜索显示
+                value:"",//搜索内容
+                suggest:[],//搜索建议
+                searchList:[],//搜索结果
             }
         },
         methods: {
+            showSearch(){
+                this.show = true;
+            },
+            showHome(){
+                this.show = false;
+            },
+            showHotSearch(){
+                this.showHot = false;
+            },
             arrSlice(arr){
                 return arr.slice(0,6);
             },
@@ -93,8 +121,8 @@
                     console.log(err);
                 })
             },
-            getPersonalized(){//推荐歌单
-                this.$fly.get("/personalized?limit=6")
+            getPersonalized(){//歌单
+                this.$fly.get("/personalized")
                     .then(res =>{
                         this.personalized = res.data.result;
                         console.log(res);
@@ -107,28 +135,47 @@
                         console.log(res);
                     })
             },
-            getNewsong(){
+            getNewsong(){//新音乐
                 this.$fly.get("/personalized/newsong")
                     .then(res =>{
                         this.newsong = res.data.result;
                         console.log(res);
                     })
             },
-            getDjprogram(){
+            getDjprogram(){//电台
                 this.$fly.get("/personalized/djprogram")
                     .then(res =>{
                         this.djprogram = res.data.result;
                         console.log(res);
                     })
             },
-            getProgram(){
+            getProgram(){//节目
                 this.$fly.get("/program/recommend")
                     .then(res =>{
                         this.program = res.data.programs;
                         console.log(res);
                     })
             },
-            search(){},//搜索
+            getHotSearch(){
+                this.$fly.get('/search/hot').then(res =>{
+                    console.log(res);
+                    this.hotSearch = res.data.result.hots;
+                })
+            },
+            search(){//搜索
+                this.$fly.get('/search?keywords=' +
+                    this.value)
+                    .then(res =>{
+                        this.searchList = res.data;
+                        console.log(res);
+                    })
+            },
+            searchSuggest(){//搜索建议
+                this.$flt.get('/search/suggest?keywords=' + value +'&type=mobile').then(res =>{
+                    this.suggest = res.data;
+                    console.log(res);
+                })
+            }
         },
         mounted() {
             this.getBanner();
@@ -137,6 +184,7 @@
             this.getNewsong();
             this.getDjprogram();
             this.getProgram();
+            this.getHotSearch();
         },
         created() {
 

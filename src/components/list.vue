@@ -4,8 +4,8 @@
             <div>{{title}}</div>
             <div>{{button}}</div>
         </div>
-        <div class="grid">
-            <div class="grid-item" v-for="(item, index) in array" :key="index">
+        <div class="grid" >
+            <div class="grid-item" v-for="(item, index) in array" :key="index" @click="toMusicList(item.id)">
                 <img :src="item.picUrl" class="list-img">
                 <div class="list-title">{{item.name}}</div>
             </div>
@@ -30,11 +30,32 @@
             }
         },
         data() {
-            return {}
+            return {
+                id:"",//歌单id
+            }
         },
-        methods: {},
+        methods: {
+            toMusicList(id){
+                wx.navigateTo({
+                    url: '../musicList/musicList?id='+id,
+                    events: {
+                        // 为指定事件添加一个监听器，获取被打开页面传送到当前页面的数据
+                        acceptDataFromOpenedPage: function(data) {
+                            console.log(data)
+                        },
+                        someEvent: function(data) {
+                            console.log(data)
+                        }
+                    },
+                    success: function(res) {
+                        // 通过eventChannel向被打开页面传送数据
+                        res.eventChannel.emit('acceptDataFromOpenerPage', { data: 'test' })
+                    }
+                })
+            }
+        },
         mounted() {
-
+            // id=this.array;
         },
         created() {
 

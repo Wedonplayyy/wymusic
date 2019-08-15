@@ -23,7 +23,8 @@ export default {
     pages: [
       'pages/home/home',
       'pages/user/user',
-      'pages/singer/singer'
+      'pages/singer/singer',
+      'pages/musicList/musicList'
     ],
     tabBar: {
       color: '#333',
@@ -32,8 +33,8 @@ export default {
         {
           pagePath: 'pages/home/home',
           text: '首页',
-          iconPath: 'native/icons/音乐2.png',
-          selectedIconPath: 'native/icons/音乐.png'
+          iconPath: 'native/icons/音乐1.png',
+          selectedIconPath: 'native/icons/音乐2.png'
         },
         {
           pagePath: 'pages/singer/singer',
