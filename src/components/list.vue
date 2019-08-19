@@ -41,7 +41,7 @@
                 console.log(temp);
 
                 wx.navigateTo({
-                    url: '../musicList/musicList?id='+id,
+                    url: '../musicList/musicList',
                     success: function(res) {
                     }
                 })

@@ -24,7 +24,8 @@ export default {
       'pages/home/home',
       'pages/user/user',
       'pages/singer/singer',
-      'pages/musicList/musicList'
+      'pages/musicList/musicList',
+      'pages/play/play'
     ],
     tabBar: {
       color: '#333',

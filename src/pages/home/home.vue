@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="body">
+        <div v-if="!this.show" class="body">
             <div class="search">
                 <div>音乐馆</div>
                 <div>
                     <input type="text"
                            placeholder="搜索"
-                           onfocus="showSearch"/>
+                           @focus="this.showSearch" />
                 </div>
                 <div style="display: flex">
                     <div>搜索</div>
@@ -49,17 +49,17 @@
             <list class="list-item" :array="this.arrSlice(djprogram)" title="推荐电台" button="电台广场"></list>
             <list class="list-item" :array="this.arrSlice(program)" title="推荐节目" button="更多节目"></list>
         </div>
-        <div>
+        <div v-else>
             <div>
                 <input type="text"
                        placeholder="请输入搜索关键词"
                        autofocus
                        @keydown.enter="search"
                        v-model="value"/>
-                <div @click="showHome">取消</div>
+                <div @click="this.showHome">取消</div>
             </div>
             <div>搜索历史</div>
-            <div v-if="showHot">
+            <div v-if="this.showHot">
                 <div>热搜榜</div>
                 <div v-model="(item,index) in this.hotSearch" :key="index">{{item}}</div>
             </div>
@@ -71,7 +71,7 @@
     </div>
 
 
-    
+
 </template>
 
 <script>
@@ -101,6 +101,7 @@
         methods: {
             showSearch(){
                 this.show = true;
+                console.log(this.show);
             },
             showHome(){
                 this.show = false;

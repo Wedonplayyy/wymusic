@@ -12,9 +12,16 @@
             <div class="playAll">播放全部（共{{musicListInfo.trackCount}}首）</div>
             <div class="collect">+收藏（{{musicListInfo.subscribedCount}}）</div>
         </div>
-        <div v-for="(item,index) in this.musicListInfo.tracks" :key="index">
-            <div></div>
-            <div></div>
+        <div v-for="(item,index) in this.songs"
+             :key="item.id"
+             @click="toSong(item.id)"
+             style="width: 100%;padding: 5px 0px;display: flex;">
+                <div style="display: flex;justify-content: center;align-items: center;width:10%;color: grey;">{{index+1}}</div>
+                <div style="width: 80%;">
+                    <div style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{item.name}}</div>
+                    <div style="color: grey;font-size: 14px;">{{item.ar[0].name}}</div>
+                </div>
+                <div></div>
         </div>
     </div>
 
@@ -28,13 +35,39 @@
         data() {
             return {
                 musicListInfo:[],//歌单详情
+                songs:[],//所有歌曲
+
             }
         },
-        methods: {},
+        methods: {
+            getTrackIds(list){
+                let str = '';
+                for(let i in list){
+                    str = str + list[i].id + ',';
+                }
+                str = str.substring(0,str.length-1);
+                this.$fly.get('/song/detail?ids=' + str).then(res =>{
+                    console.log(res.data);
+                    this.songs = res.data.songs;
+                })
+            },
+            toSong(id){
+                this.$store.commit('setUrlId',id);
+                let temp = this.$store.state.urlId.urlId
+                console.log(temp);
+                wx.navigateTo({
+                    url: '../play/play',
+                    success: function(res) {
+
+                    }
+                })
+            }
+        },
         mounted() {
             this.$fly.get('/playlist/detail?id=' + this.$store.state.listId.musicListId).then(res =>{
                 this.musicListInfo = res.data.playlist;
                 console.log(res.data);
+                this.getTrackIds(this.musicListInfo.trackIds);
             })
         },
         created() {
